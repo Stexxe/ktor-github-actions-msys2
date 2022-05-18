@@ -1,0 +1,39 @@
+name: CI
+on: [push, pull_request]
+env:
+  GRADLE_OPTS: "-Dorg.gradle.internal.launcher.welcomeMessageEnabled=false"
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build-and-test:
+    name: "Build and test (Windows)"
+    runs-on: windows-2019
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3.0.2
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3.3.0
+        with:
+          java-version: 17.0.2+8
+          distribution: temurin
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2.1.5
+
+      - name: Set up MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          release: false
+          install: mingw-w64-x86_64-curl
+        if: runner.os == 'Windows'
+
+      - name: Build and test
+        run: ./gradlew check
+        env:
+          PATH: C:\msys64\mingw64\bin;${{ env.PATH }}
