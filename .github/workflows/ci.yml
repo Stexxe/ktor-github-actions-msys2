@@ -32,6 +32,9 @@ jobs:
           release: false
           install: mingw-w64-x86_64-curl
         if: runner.os == 'Windows'
+        
+      - name: Check
+        run: objdump -d C:\Users\runneradmin\.konan\dependencies\msys2-mingw-w64-x86_64-1\x86_64-w64-mingw32\lib\crt2.o
 
       - name: Build and test
         run: ./gradlew check
